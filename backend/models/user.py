@@ -1,7 +1,7 @@
 import uuid
 from sqlalchemy import Column, String, DateTime, func
 from db.base import Base
-
+from sqlalchemy.orm import relationship
 
 class User(Base):
     __tablename__ = "users"
@@ -14,3 +14,5 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     created_at    = Column(DateTime(timezone=True), server_default=func.now())
     updated_at    = Column(DateTime(timezone=True), onupdate=func.now())
+
+    api_keys = relationship("APIKey", back_populates="user")
