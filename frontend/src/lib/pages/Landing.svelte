@@ -55,6 +55,15 @@
   <!-- Landing Section -->
   <section class="landing fade-in">
     <div class="hero glass slide-up">
+      <video
+        src="/src/assets/dodo.mp4"
+        autoplay
+        loop
+        muted
+        playsinline
+        class="hero-video"
+      ></video>
+      <div class="hero-video-overlay"></div>
       <small>AI Security Control Plane</small>
       <h1>PulseGuard monitors risk signals before incidents escalate.</h1>
       <p>
@@ -251,7 +260,8 @@
   }
 
   .hero {
-    background: radial-gradient(circle at 50% 0%, #1a1a1a 0%, transparent 70%);
+    position: relative;
+    overflow: hidden;
     border-radius: 28px;
     border: 1px solid var(--border-strong);
     padding: 3.5rem 3rem;
@@ -366,6 +376,38 @@
     color: var(--text-muted);
     font-size: 0.9rem;
     line-height: 1.4;
+  }
+
+  /* Hero Video Background */
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    filter: brightness(0.65) saturate(0.6);
+  }
+
+  .hero-video-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: radial-gradient(
+      ellipse at 50% 100%,
+      rgba(5, 5, 5, 0.6) 0%,
+      rgba(5, 5, 5, 0.15) 60%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  .hero small,
+  .hero h1,
+  .hero p,
+  .hero-status {
+    position: relative;
+    z-index: 2;
   }
 
   /* Footer Styles */
