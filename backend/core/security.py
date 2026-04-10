@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from jose import JWTError, jwt
-from passlib.context import CryptContext
+import bcrypt
 
 # ⚠️  Move SECRET_KEY to an environment variable before going to production
 #     Generate one with:  openssl rand -hex 32
@@ -10,21 +10,19 @@ SECRET_KEY = "change-me-use-openssl-rand-hex-32"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto", truncate_error=False)
-
-
-def _truncate(password: str) -> str:
+def _truncate(password: str) -> bytes:
     """Explicitly truncate to 72 bytes — bcrypt's hard limit."""
-    encoded = password.encode("utf-8")[:72]
-    return encoded.decode("utf-8", errors="ignore")
-
+    return password.encode("utf-8")[:72]
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(_truncate(password))
-
+    pwd_bytes = _truncate(password)
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw(pwd_bytes, salt).decode('utf-8')
 
 def verify_password(plain: str, hashed: str) -> bool:
-    return pwd_context.verify(_truncate(plain), hashed)
+    pwd_bytes = _truncate(plain)
+    hashed_bytes = hashed.encode('utf-8')
+    return bcrypt.checkpw(pwd_bytes, hashed_bytes)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:

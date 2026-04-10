@@ -2,7 +2,7 @@ from pydantic import BaseModel, EmailStr, field_validator
 
 
 class RegisterSchema(BaseModel):
-    companyName: str
+    companyName: str | None = None
     firstName: str
     lastName: str
     email: EmailStr
