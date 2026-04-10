@@ -162,15 +162,15 @@
   }
 
   .state.success {
-    color: #baf7d4;
-    border-color: rgba(61, 219, 154, 0.36);
-    background: rgba(61, 219, 154, 0.12);
+    color: #bbf7d0;
+    border-color: rgba(16, 185, 129, 0.36);
+    background: var(--success-soft);
   }
 
   .state.error {
-    color: #ffb7c7;
-    border-color: rgba(255, 107, 135, 0.36);
-    background: rgba(255, 107, 135, 0.12);
+    color: #fecaca;
+    border-color: rgba(239, 68, 68, 0.36);
+    background: var(--danger-soft);
   }
 
   code {

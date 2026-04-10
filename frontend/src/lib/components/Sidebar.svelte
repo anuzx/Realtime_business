@@ -65,7 +65,7 @@
 
   .toggle {
     width: 100%;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.03);
     color: var(--text-muted);
     border: 1px solid var(--border);
     border-radius: 0.65rem;
@@ -96,14 +96,15 @@
   }
 
   nav a:hover {
-    color: #f1f4ff;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.04);
     border-color: var(--border);
   }
 
   nav a.active {
     color: #ffffff;
-    background: rgba(124, 139, 255, 0.25);
-    border-color: rgba(124, 139, 255, 0.46);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.24);
   }
 
   @media (max-width: 960px) {

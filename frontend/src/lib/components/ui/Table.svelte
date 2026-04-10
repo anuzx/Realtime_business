@@ -106,13 +106,21 @@
   th {
     color: var(--text-muted);
     font-weight: 600;
-    background: rgba(14, 23, 42, 0.84);
+    background: rgba(18, 18, 18, 0.94);
     position: sticky;
     top: 0;
   }
 
   td {
-    color: #d7dffd;
+    color: var(--text);
+  }
+
+  tbody tr {
+    transition: background-color 120ms ease;
+  }
+
+  tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
   }
 
   tr:last-child td {
@@ -132,7 +140,7 @@
   }
 
   button.active {
-    color: #eff2ff;
+    color: #ffffff;
   }
 
   .empty {

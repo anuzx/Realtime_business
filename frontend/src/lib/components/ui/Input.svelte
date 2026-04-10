@@ -48,25 +48,30 @@
     width: 100%;
     border-radius: var(--radius-sm);
     border: 1px solid var(--border);
-    background: rgba(10, 18, 35, 0.95);
+    background: rgba(20, 20, 20, 0.96);
     color: var(--text);
     padding: 0.64rem 0.72rem;
     outline: none;
-    transition: border-color 140ms ease, box-shadow 140ms ease;
+    transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+  }
+
+  input::placeholder {
+    color: var(--text-subtle);
   }
 
   input:focus {
-    border-color: rgba(124, 139, 255, 0.8);
-    box-shadow: 0 0 0 3px rgba(124, 139, 255, 0.2);
+    border-color: var(--border-strong);
+    background: rgba(26, 26, 26, 0.96);
+    box-shadow: 0 0 0 3px var(--focus-ring);
   }
 
   input.error {
-    border-color: rgba(255, 107, 135, 0.8);
-    box-shadow: 0 0 0 3px rgba(255, 107, 135, 0.16);
+    border-color: rgba(239, 68, 68, 0.75);
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
   }
 
   .input-wrap__error {
     font-size: 0.75rem;
-    color: #ff9fb4;
+    color: #fda4af;
   }
 </style>

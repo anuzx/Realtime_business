@@ -1,4 +1,5 @@
 <script lang="ts">
+  import AlertsSkeleton from '../components/AlertsSkeleton.svelte';
   import { onMount } from 'svelte'
   import { api, ApiError } from '../api'
   import AlertItem from '../components/AlertItem.svelte'
@@ -78,7 +79,7 @@
     {/if}
 
     {#if loading}
-      <p class="state">Loading alerts...</p>
+      <AlertsSkeleton />
     {:else if $alertsStore.length === 0}
       <p class="state">No active alerts at the moment.</p>
     {:else}
@@ -129,9 +130,9 @@
   }
 
   .state.error {
-    color: #ffb7c7;
-    border-color: rgba(255, 107, 135, 0.36);
-    background: rgba(255, 107, 135, 0.12);
+    color: #fecaca;
+    border-color: rgba(239, 68, 68, 0.36);
+    background: var(--danger-soft);
   }
 
   @media (max-width: 780px) {

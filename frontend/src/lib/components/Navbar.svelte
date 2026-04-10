@@ -53,7 +53,7 @@
 
   .brand .status-dot {
     background: var(--success);
-    box-shadow: 0 0 0 6px rgba(61, 219, 154, 0.15);
+    box-shadow: 0 0 0 6px var(--success-soft);
   }
 
   .brand h1 {
@@ -84,12 +84,13 @@
   }
 
   nav a.active {
-    color: #f5f7ff;
-    background: rgba(124, 139, 255, 0.24);
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.12);
   }
 
   nav a:hover {
-    color: #f0f2ff;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.05);
   }
 
   .user-box {

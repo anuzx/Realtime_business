@@ -104,15 +104,15 @@
   }
 
   .error {
-    color: #ffadbf;
-    border: 1px solid rgba(255, 107, 135, 0.35);
-    background: rgba(255, 107, 135, 0.12);
+    color: #fecaca;
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    background: var(--danger-soft);
   }
 
   .success {
-    color: #b8ffd8;
-    border: 1px solid rgba(61, 219, 154, 0.35);
-    background: rgba(61, 219, 154, 0.12);
+    color: #bbf7d0;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    background: var(--success-soft);
   }
 
   .meta {
@@ -122,7 +122,7 @@
   }
 
   .meta a {
-    color: #d8deff;
+    color: #f4f4f5;
     text-decoration: underline;
     text-underline-offset: 2px;
   }

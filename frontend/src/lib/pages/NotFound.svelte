@@ -24,7 +24,7 @@
   }
 
   .code {
-    color: #b8c2ec;
+    color: #d4d4d8;
     letter-spacing: 0.24em;
     font-size: 0.75rem;
   }

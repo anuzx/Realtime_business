@@ -1,4 +1,6 @@
 <script lang="ts">
+  import DashboardSkeleton from '../components/DashboardSkeleton.svelte';
+  import Skeleton from '../components/ui/Skeleton.svelte';
   import {
     Activity,
     AlertTriangle,
@@ -100,7 +102,7 @@
     </header>
 
     {#if loading}
-      <p class="state">Loading dashboard metrics...</p>
+      <DashboardSkeleton />
     {:else if error}
       <p class="state error">{error}</p>
     {/if}
@@ -178,9 +180,9 @@
   }
 
   .state.error {
-    color: #ffb7c7;
-    border-color: rgba(255, 107, 135, 0.36);
-    background: rgba(255, 107, 135, 0.12);
+    color: #fecaca;
+    border-color: rgba(239, 68, 68, 0.36);
+    background: var(--danger-soft);
   }
 
   .stats {
@@ -216,7 +218,7 @@
   }
 
   .footnote strong {
-    color: #f1f5ff;
+    color: var(--text);
   }
 
   @media (max-width: 1080px) {

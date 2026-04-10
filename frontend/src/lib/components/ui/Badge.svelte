@@ -23,15 +23,15 @@
   }
 
   .badge--neutral {
-    color: #c7d2f1;
-    background: rgba(159, 176, 214, 0.14);
-    border-color: rgba(159, 176, 214, 0.24);
+    color: #d4d4d8;
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.14);
   }
 
   .badge--success {
-    color: #b9ffd8;
-    background: rgba(61, 219, 154, 0.2);
-    border-color: rgba(61, 219, 154, 0.32);
+    color: #bbf7d0;
+    background: rgba(16, 185, 129, 0.18);
+    border-color: rgba(16, 185, 129, 0.34);
   }
 
   .badge--warning {
@@ -41,14 +41,14 @@
   }
 
   .badge--error {
-    color: #ffc8d5;
-    background: rgba(255, 107, 135, 0.2);
-    border-color: rgba(255, 107, 135, 0.32);
+    color: #fecaca;
+    background: rgba(239, 68, 68, 0.18);
+    border-color: rgba(239, 68, 68, 0.34);
   }
 
   .badge--info {
-    color: #c8f0ff;
-    background: rgba(99, 211, 255, 0.18);
-    border-color: rgba(99, 211, 255, 0.32);
+    color: #dbeafe;
+    background: rgba(59, 130, 246, 0.18);
+    border-color: rgba(59, 130, 246, 0.34);
   }
 </style>

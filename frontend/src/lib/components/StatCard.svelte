@@ -50,12 +50,12 @@
     width: 34px;
     height: 34px;
     border-radius: 0.7rem;
-    border: 1px solid rgba(99, 211, 255, 0.35);
-    background: rgba(99, 211, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    background: rgba(255, 255, 255, 0.08);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: #cbf2ff;
+    color: #f4f4f5;
   }
 
   p.positive,

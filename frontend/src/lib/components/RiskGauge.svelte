@@ -34,8 +34,8 @@
     aspect-ratio: 1;
     border-radius: 50%;
     background:
-      radial-gradient(circle at center, rgba(12, 19, 37, 1) 57%, transparent 58%),
-      conic-gradient(var(--tone) var(--angle), rgba(159, 176, 214, 0.16) 0deg);
+      radial-gradient(circle at center, rgba(12, 12, 12, 1) 57%, transparent 58%),
+      conic-gradient(var(--tone) var(--angle), rgba(255, 255, 255, 0.08) 0deg);
     display: grid;
     place-items: center;
     border: 1px solid var(--border);

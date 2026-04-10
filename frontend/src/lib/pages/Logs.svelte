@@ -1,4 +1,5 @@
 <script lang="ts">
+  import LogsSkeleton from '../components/LogsSkeleton.svelte';
   import { onMount } from 'svelte'
   import { api, ApiError } from '../api'
   import LogTable from '../components/LogTable.svelte'
@@ -71,7 +72,7 @@
     {/if}
 
     {#if loading}
-      <p class="state">Loading logs...</p>
+      <LogsSkeleton />
     {:else if $logsStore.length === 0}
       <p class="state">No logs found for selected filters.</p>
     {:else}

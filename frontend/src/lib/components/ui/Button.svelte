@@ -20,12 +20,14 @@
 
 <style>
   .btn {
-    border: 1px solid transparent;
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     padding: 0.58rem 1rem;
     font-size: 0.92rem;
-    font-weight: 600;
+    font-weight: 500;
+    line-height: 1;
     color: var(--text);
+    background: var(--surface-muted);
     cursor: pointer;
     transition: transform 160ms ease, border-color 180ms ease, background-color 180ms ease,
       box-shadow 180ms ease;
@@ -37,6 +39,12 @@
 
   .btn:hover:not(:disabled) {
     transform: translateY(-1px);
+  }
+
+  .btn:focus-visible {
+    outline: none;
+    border-color: var(--border-strong);
+    box-shadow: 0 0 0 3px var(--focus-ring);
   }
 
   .btn:disabled {
@@ -54,17 +62,19 @@
   }
 
   .btn--primary {
-    background: linear-gradient(135deg, var(--accent), var(--accent-strong));
-    box-shadow: 0 12px 24px rgba(91, 110, 255, 0.32);
+    color: var(--accent-contrast);
+    border-color: rgba(255, 255, 255, 0.9);
+    background: linear-gradient(180deg, var(--accent-strong), var(--accent));
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.1);
   }
 
   .btn--primary:hover:not(:disabled) {
-    box-shadow: 0 16px 28px rgba(91, 110, 255, 0.4);
+    box-shadow: 0 12px 24px rgba(255, 255, 255, 0.14);
   }
 
   .btn--secondary {
-    background: rgba(99, 211, 255, 0.14);
-    border-color: rgba(99, 211, 255, 0.32);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--border-strong);
   }
 
   .btn--ghost {
@@ -74,12 +84,12 @@
 
   .btn--ghost:hover:not(:disabled) {
     border-color: var(--border-strong);
-    background: rgba(159, 176, 214, 0.08);
+    background: rgba(255, 255, 255, 0.05);
   }
 
   .btn--danger {
-    background: rgba(255, 107, 135, 0.16);
-    border-color: rgba(255, 107, 135, 0.32);
-    color: #ffd8e2;
+    background: var(--danger-soft);
+    border-color: rgba(239, 68, 68, 0.45);
+    color: #fecaca;
   }
 </style>

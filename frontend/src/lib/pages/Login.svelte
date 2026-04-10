@@ -84,11 +84,11 @@
 
   .error {
     font-size: 0.82rem;
-    color: #ffadbf;
-    border: 1px solid rgba(255, 107, 135, 0.35);
+    color: #fecaca;
+    border: 1px solid rgba(239, 68, 68, 0.35);
     border-radius: 0.72rem;
     padding: 0.56rem 0.65rem;
-    background: rgba(255, 107, 135, 0.12);
+    background: var(--danger-soft);
   }
 
   .meta {
@@ -98,7 +98,7 @@
   }
 
   .meta a {
-    color: #d8deff;
+    color: #f4f4f5;
     text-decoration: underline;
     text-underline-offset: 2px;
   }
