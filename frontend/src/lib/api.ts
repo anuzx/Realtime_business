@@ -19,10 +19,13 @@ export class ApiError extends Error {
   }
 }
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_URL ?? "/api";
 
 function buildUrl(path: string, query?: Record<string, QueryValue>): string {
-  const url = new URL(`${path}`, API_BASE);
+  const isAbsolute = API_BASE.startsWith("http");
+  const base = isAbsolute ? API_BASE : window.location.origin + API_BASE;
+  const fullPath = base.replace(/\/$/, "") + (path.startsWith("/") ? path : "/" + path);
+  const url = new URL(fullPath);
 
   if (query) {
     for (const [key, value] of Object.entries(query)) {
