@@ -9,12 +9,22 @@
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.app.json && tsc -p tsconfig.node.json"
   },
+  "dependencies": {
+    "chart.js": "^4.5.1",
+    "clsx": "^2.1.1",
+    "lucide-svelte": "^0.554.0",
+    "svelte-chartjs": "^4.0.1",
+    "svelte-spa-router": "^4.0.1"
+  },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "@tailwindcss/postcss": "^4.2.2",
     "@tsconfig/svelte": "^5.0.8",
     "@types/node": "^24.12.2",
+    "postcss": "^8.5.9",
     "svelte": "^5.55.1",
     "svelte-check": "^4.4.6",
+    "tailwindcss": "^4.2.2",
     "typescript": "~6.0.2",
     "vite": "^8.0.4"
   }

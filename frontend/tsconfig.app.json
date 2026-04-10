@@ -5,6 +5,11 @@
     "target": "es2023",
     "module": "esnext",
     "types": ["svelte", "vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "$lib": ["src/lib"],
+      "$lib/*": ["src/lib/*"]
+    },
     "noEmit": true,
     /**
      * Typecheck JS in `.svelte` and `.js` files by default.
