@@ -110,11 +110,11 @@ export const api = {
     })
   },
 
-  register(email: string, password: string) {
+  register(data: Record<string, unknown>) {
     return request<Record<string, unknown>>('/auth/register', {
       method: 'POST',
       auth: false,
-      body: { email, password },
+      body: data,
     })
   },
 

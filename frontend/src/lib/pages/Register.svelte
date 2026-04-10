@@ -5,9 +5,12 @@
   import Button from '../components/ui/Button.svelte'
   import Input from '../components/ui/Input.svelte'
 
+  let firstName = ''
+  let lastName = ''
+  let companyName = ''
   let email = ''
   let password = ''
-  let confirm = ''
+  
   let loading = false
   let error = ''
   let success = ''
@@ -16,20 +19,27 @@
     error = ''
     success = ''
 
-    if (password.length < 8) {
-      error = 'Password must contain at least 8 characters.'
+    if (!firstName || !lastName) {
+      error = 'Please enter your full name.'
       return
     }
 
-    if (password !== confirm) {
-      error = 'Passwords do not match.'
+    if (password.length < 8) {
+      error = 'Password must contain at least 8 characters.'
       return
     }
 
     loading = true
 
     try {
-      await api.register(email.trim(), password)
+      await api.register({
+        firstName: firstName.trim(),
+        lastName: lastName.trim(),
+        companyName: companyName.trim(),
+        email: email.trim().toLowerCase(),
+        password: password
+      })
+      
       success = 'Account created. Redirecting to login...'
       setTimeout(() => {
         push('/login')
@@ -50,7 +60,15 @@
 
 <AuthCard title="Create account" subtitle="Set up your PulseGuard operator profile.">
   <form on:submit|preventDefault={submit} class="form">
+    <div class="row">
+      <Input label="First Name" bind:value={firstName} required placeholder="Jane" />
+      <Input label="Last Name" bind:value={lastName} required placeholder="Doe" />
+    </div>
+
+    <Input label="Company Name" bind:value={companyName} placeholder="Acme Corp (Optional)" />
+
     <Input label="Email" type="email" bind:value={email} required placeholder="you@company.com" />
+    
     <Input
       label="Password"
       type="password"
@@ -58,7 +76,6 @@
       required
       placeholder="Minimum 8 characters"
     />
-    <Input label="Confirm password" type="password" bind:value={confirm} required placeholder="Repeat password" />
 
     {#if error}
       <p class="error">{error}</p>
@@ -81,6 +98,12 @@
 <style>
   .form {
     display: grid;
+    gap: 0.8rem;
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 0.8rem;
   }
 
