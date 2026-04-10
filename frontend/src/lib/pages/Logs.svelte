@@ -13,15 +13,15 @@
   let error = ''
 
   let q = ''
-  let level = ''
-  let source = ''
+  let severity = ''
+  let eventType = ''
 
   async function loadLogs(): Promise<void> {
     loading = true
     error = ''
 
     try {
-      const response = await api.getLogs({ q, level, source })
+      const response = await api.getLogs({ q, severity, event_type: eventType })
       const items = extractList(response, ['logs'])
       logsStore.set(items)
     } catch (err) {
@@ -46,22 +46,23 @@
 <ProtectedPage>
   <section class="logs-page">
     <header>
-      <h2>Request Logs</h2>
-      <p>Filter logs by source and severity before deep analysis.</p>
+      <h2>Security Logs</h2>
+      <p>Inspect ingested security events from your backend systems.</p>
     </header>
 
     <form class="filters glass-soft" on:submit|preventDefault={loadLogs}>
       <Input label="Search" bind:value={q} placeholder="message, trace id, or actor" />
       <label>
-        <span>Level</span>
-        <select bind:value={level}>
+        <span>Severity</span>
+        <select bind:value={severity}>
           <option value="">All</option>
-          <option value="info">Info</option>
-          <option value="warning">Warning</option>
-          <option value="error">Error</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="critical">Critical</option>
         </select>
       </label>
-      <Input label="Source" bind:value={source} placeholder="api-gateway" />
+      <Input label="Event Type" bind:value={eventType} placeholder="login, role_change, export" />
       <div class="actions">
         <Button type="submit" disabled={loading}>{loading ? 'Loading...' : 'Apply filters'}</Button>
       </div>

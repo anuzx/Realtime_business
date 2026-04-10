@@ -7,6 +7,10 @@ export type AuthUser = {
   id?: string
   email: string
   name?: string
+  first_name?: string
+  last_name?: string
+  company_name?: string
+  apiKey?: string
 }
 
 export type AuthState = {

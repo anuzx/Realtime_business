@@ -12,16 +12,21 @@
   let loading = false
   let error = ''
 
-  function parseLoginResponse(payload: unknown): { token: string; user: Record<string, unknown> | null } {
+  function parseLoginResponse(payload: unknown): {
+    token: string;
+    user: Record<string, unknown> | null;
+    apiKey: string;
+  } {
     const data = asRecord(payload)
     const token = String(data.token ?? data.access_token ?? data.jwt ?? '')
+    const apiKey = String(data.api_key ?? data.apiKey ?? '')
 
     const userRaw = data.user
     const user = userRaw && typeof userRaw === 'object' && !Array.isArray(userRaw)
       ? (userRaw as Record<string, unknown>)
       : null
 
-    return { token, user }
+    return { token, user, apiKey }
   }
 
   async function submit(): Promise<void> {
@@ -41,7 +46,12 @@
         name: email.split('@')[0],
       }
 
-      setAuth(parsed.token, (parsed.user ?? fallbackUser) as { email: string; name?: string })
+      const mergedUser = {
+        ...(parsed.user ?? fallbackUser),
+        apiKey: parsed.apiKey,
+      }
+
+      setAuth(parsed.token, mergedUser as { email: string; name?: string })
       await push('/dashboard')
     } catch (err) {
       if (err instanceof ApiError) {

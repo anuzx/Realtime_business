@@ -1,6 +1,5 @@
 <script lang="ts">
-  import DashboardSkeleton from '../components/DashboardSkeleton.svelte';
-  import Skeleton from '../components/ui/Skeleton.svelte';
+  import DashboardSkeleton from '../components/DashboardSkeleton.svelte'
   import {
     Activity,
     AlertTriangle,
@@ -9,7 +8,7 @@
   } from 'lucide-svelte'
   import { onMount } from 'svelte'
   import { api, ApiError } from '../api'
-  import { asRecord, extractNumber, extractSeries, extractText } from '../normalize'
+  import { asRecord, extractNumber, extractText } from '../normalize'
   import BarChart from '../components/charts/BarChart.svelte'
   import DoughnutChart from '../components/charts/DoughnutChart.svelte'
   import LineChart from '../components/charts/LineChart.svelte'
@@ -26,6 +25,7 @@
   let activeAlerts = 0
   let monitoredModels = 0
   let riskScore = 0
+  let highRiskCount = 0
 
   let requestLabels: string[] = []
   let requestValues: number[] = []
@@ -41,30 +41,52 @@
     error = ''
 
     try {
-      const [summaryRaw, riskRaw] = await Promise.all([
+      const [summaryRaw, riskRaw, keysRaw, logsRaw] = await Promise.all([
         api.getDashboardSummary(),
         api.getRiskScore(),
+        api.getApiKeys(),
+        api.getLogs({ limit: 100 }),
       ])
 
       const summary = asRecord(summaryRaw)
       const risk = asRecord(riskRaw)
+      const keys = Array.isArray(keysRaw) ? keysRaw : []
+      const logs = Array.isArray(logsRaw) ? logsRaw : []
 
-      totalRequests = extractNumber(summary, ['totalRequests', 'requests', 'request_count'], 0)
-      errorRate = extractNumber(summary, ['errorRate', 'error_rate'], 0)
-      activeAlerts = extractNumber(summary, ['activeAlerts', 'alerts', 'open_alerts'], 0)
-      monitoredModels = extractNumber(summary, ['models', 'monitoredModels', 'model_count'], 0)
-      riskScore = extractNumber(risk, ['score', 'riskScore', 'risk'], 0)
+      totalRequests = extractNumber(summary, ['total_logs', 'totalLogs'], 0)
+      activeAlerts = extractNumber(summary, ['alerts'], 0)
+      highRiskCount = extractNumber(summary, ['high_risk'], 0)
+      riskScore = extractNumber(risk, ['risk_score', 'score', 'riskScore', 'risk'], 0)
+      monitoredModels = keys.length
+      errorRate = totalRequests > 0 ? Number(((highRiskCount / totalRequests) * 100).toFixed(2)) : 0
 
-      const requestSeries = extractSeries(summary, ['requestSeries', 'requestVolume', 'traffic'])
-      const errorSeries = extractSeries(summary, ['errorCategories', 'errorsByCategory', 'errors'])
-      const eventSeries = extractSeries(summary, ['eventDistribution', 'eventTypes', 'events'])
+      const byEvent = new Map<string, number>()
+      const bySeverity = new Map<string, number>()
+      const byHour = new Map<string, number>()
 
-      requestLabels = requestSeries.labels
-      requestValues = requestSeries.values
-      errorLabels = errorSeries.labels
-      errorValues = errorSeries.values
-      eventLabels = eventSeries.labels
-      eventValues = eventSeries.values
+      for (const log of logs) {
+        const row = asRecord(log)
+        const eventType = String(row.event_type ?? 'unknown')
+        const severity = String(row.severity ?? 'low')
+        const receivedAt = String(row.received_at ?? '')
+
+        byEvent.set(eventType, (byEvent.get(eventType) ?? 0) + 1)
+        bySeverity.set(severity, (bySeverity.get(severity) ?? 0) + 1)
+
+        if (receivedAt) {
+          const hourBucket = receivedAt.slice(0, 13).replace('T', ' ') + ':00'
+          byHour.set(hourBucket, (byHour.get(hourBucket) ?? 0) + 1)
+        }
+      }
+
+      const sortedHours = [...byHour.entries()].sort((a, b) => a[0].localeCompare(b[0])).slice(-10)
+      requestLabels = sortedHours.map(([label]) => label)
+      requestValues = sortedHours.map(([, count]) => count)
+
+      errorLabels = [...bySeverity.keys()]
+      errorValues = [...bySeverity.values()]
+      eventLabels = [...byEvent.keys()]
+      eventValues = [...byEvent.values()]
     } catch (err) {
       requestLabels = []
       requestValues = []
@@ -89,7 +111,7 @@
     loadDashboard()
   })
 
-  $: riskText = extractText({ riskScore }, ['riskScore'], '0')
+  $: riskText = String(riskScore)
 </script>
 
 <ProtectedPage>
@@ -108,33 +130,33 @@
     {/if}
 
     <div class="stats stagger">
-      <StatCard title="Total Requests" value={String(totalRequests)} trend="+12% today" icon={Activity} />
+      <StatCard title="Total Logs" value={String(totalRequests)} trend="Captured from your integrations" icon={Activity} />
       <StatCard
-        title="Error Rate"
+        title="High-Risk Rate"
         value={`${errorRate}%`}
-        trend={errorRate > 4 ? 'Increased from baseline' : 'Healthy baseline'}
+        trend={errorRate > 4 ? 'Investigate active threats' : 'Within normal range'}
         positive={errorRate <= 4}
         icon={AlertTriangle}
       />
-      <StatCard title="Active Alerts" value={String(activeAlerts)} trend="Needs triage" positive={false} icon={CircleCheckBig} />
-      <StatCard title="Monitored Models" value={String(monitoredModels)} trend="Across all environments" icon={Database} />
+      <StatCard title="Active Alerts" value={String(activeAlerts)} trend="Pending analyst review" positive={false} icon={CircleCheckBig} />
+      <StatCard title="Active API Keys" value={String(monitoredModels)} trend="Connected developer integrations" icon={Database} />
     </div>
 
     <div class="main-grid">
-      <Card title="Request Volume" subtitle="Traffic and latency trend">
+      <Card title="Log Ingestion Volume" subtitle="Latest ingestion trend by hour">
         {#if requestLabels.length === 0}
-          <p class="empty">No request series data available.</p>
+          <p class="empty">No ingestion trend data available yet.</p>
         {:else}
-          <LineChart labels={requestLabels} values={requestValues} label="Requests" />
+          <LineChart labels={requestLabels} values={requestValues} label="Logs" />
         {/if}
       </Card>
       <RiskGauge score={riskScore} />
     </div>
 
     <div class="secondary-grid">
-      <Card title="Errors by Category">
+      <Card title="Severity Distribution">
         {#if errorLabels.length === 0}
-          <p class="empty">No error category data available.</p>
+          <p class="empty">No severity distribution data available.</p>
         {:else}
           <BarChart labels={errorLabels} values={errorValues} />
         {/if}

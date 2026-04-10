@@ -3,14 +3,16 @@
 
   export let rows: Array<Record<string, unknown>> = []
 
-  let sortKey = 'timestamp'
+  let sortKey = 'received_at'
   let sortDirection: 'asc' | 'desc' = 'desc'
 
   const columns = [
-    { key: 'timestamp', label: 'Timestamp', sortable: true },
-    { key: 'level', label: 'Level', sortable: true },
-    { key: 'source', label: 'Source', sortable: true },
-    { key: 'message', label: 'Message' },
+    { key: 'received_at', label: 'Received At', sortable: true },
+    { key: 'severity', label: 'Severity', sortable: true },
+    { key: 'event_type', label: 'Event Type', sortable: true },
+    { key: 'actor_email', label: 'Actor', sortable: true },
+    { key: 'ip_address', label: 'IP Address', sortable: true },
+    { key: 'endpoint', label: 'Endpoint', sortable: true },
   ]
 
   $: sortedRows = [...rows].sort((a, b) => {

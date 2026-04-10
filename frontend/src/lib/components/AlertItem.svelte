@@ -32,11 +32,11 @@
 <article class="alert glass-soft">
   <div>
     <h3>{String(alert.title ?? alert.message ?? 'Untitled alert')}</h3>
-    <p>{String(alert.description ?? alert.details ?? 'No description provided')}</p>
+    <p>{String(alert.message ?? alert.description ?? alert.details ?? 'No description provided')}</p>
   </div>
   <div class="meta">
     <Badge variant={severityToVariant(alert.severity)}>{String(alert.severity ?? 'unknown')}</Badge>
-    <small>{String(alert.timestamp ?? '')}</small>
+    <small>{String(alert.created_at ?? alert.timestamp ?? '')}</small>
     <Button
       variant="danger"
       size="sm"

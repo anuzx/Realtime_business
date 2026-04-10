@@ -17,7 +17,7 @@
     error = ''
 
     try {
-      const response = await api.getAlerts()
+      const response = await api.getAlerts({ resolved: false })
       alertsStore.set(extractList(response, ['alerts']))
     } catch (err) {
       alertsStore.set([])

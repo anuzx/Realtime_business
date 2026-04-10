@@ -5,15 +5,15 @@
   const endpoints = [
     { method: 'POST', path: '/api/auth/login', note: 'Authenticate and return JWT' },
     { method: 'POST', path: '/api/auth/register', note: 'Create account' },
-    { method: 'GET', path: '/api/users/me', note: 'Get current user profile' },
+    { method: 'GET', path: '/api/auth/me', note: 'Get current user profile' },
     { method: 'GET', path: '/api/dashboard/summary', note: 'Dashboard aggregate metrics' },
     { method: 'GET', path: '/api/dashboard/risk-score', note: 'Current risk score' },
     { method: 'GET', path: '/api/logs', note: 'Filterable log stream' },
     { method: 'GET', path: '/api/alerts', note: 'Current alert list' },
-    { method: 'PATCH', path: '/api/alerts/:id', note: 'Resolve an alert' },
+    { method: 'PATCH', path: '/api/alerts/:id/resolve', note: 'Resolve an alert' },
     { method: 'GET', path: '/api/api-keys', note: 'List API keys' },
     { method: 'POST', path: '/api/api-keys', note: 'Create API key' },
-    { method: 'POST', path: '/api/ai/analyze', note: 'Trigger AI analysis for selected logs' },
+    { method: 'POST', path: '/api/logs', note: 'Ingest logs with x-api-key header' },
   ]
 </script>
 

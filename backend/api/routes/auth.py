@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from schemas.auth import RegisterSchema, LoginSchema, TokenResponse
 from models.user import User
+from models.api_key import APIKey
 from core.security import hash_password, verify_password, create_access_token
 from api.deps import get_db, get_current_user
 
@@ -40,7 +41,16 @@ def register(data: RegisterSchema, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
 
-    return {"msg": "Account created successfully.", "user_id": new_user.id}
+    api_key = APIKey(user_id=new_user.id)
+    db.add(api_key)
+    db.commit()
+    db.refresh(api_key)
+
+    return {
+        "msg": "Account created successfully.",
+        "user_id": new_user.id,
+        "api_key": api_key.key,
+    }
 
 
 @router.post("/login", response_model=TokenResponse)
@@ -56,4 +66,28 @@ def login(data: LoginSchema, db: Session = Depends(get_db)):
         )
 
     token = create_access_token({"sub": user.email, "user_id": user.id})
-    return TokenResponse(access_token=token)
+
+    api_key = (
+        db.query(APIKey)
+        .filter(APIKey.user_id == user.id, APIKey.is_active == True)  # noqa: E712
+        .order_by(APIKey.created_at.asc())
+        .first()
+    )
+
+    if not api_key:
+        api_key = APIKey(user_id=user.id)
+        db.add(api_key)
+        db.commit()
+        db.refresh(api_key)
+
+    return TokenResponse(
+        access_token=token,
+        user={
+            "id": user.id,
+            "email": user.email,
+            "first_name": user.first_name,
+            "last_name": user.last_name,
+            "company_name": user.company_name,
+        },
+        api_key=api_key.key,
+    )

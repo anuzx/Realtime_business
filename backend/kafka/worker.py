@@ -7,9 +7,11 @@ Pipeline:
       └─► run anomaly detection rules
               └─► for each hit: persist Alert + WebSocket broadcast
 """
+
 import json
 import logging
 import asyncio
+from datetime import datetime
 from aiokafka import AIOKafkaConsumer
 from sqlalchemy.orm import Session
 
@@ -27,26 +29,35 @@ async def _handle_message(data: dict):
     """Process one log message end-to-end."""
     db: Session = SessionLocal()
     try:
+        occurred_at = data.get("occurred_at")
+        if isinstance(occurred_at, str):
+            try:
+                occurred_at = datetime.fromisoformat(occurred_at)
+            except ValueError:
+                occurred_at = None
+
         # 1. Persist the log row
         log = Log(
-            api_key_id           = data["api_key_id"],
-            actor_email          = data.get("actor_email"),
-            actor_id             = data.get("actor_id"),
-            actor_role           = data.get("actor_role"),
-            event_type           = data["event_type"],
-            resource             = data.get("resource"),
-            action_count         = data.get("action_count", 1),
-            ip_address           = data.get("ip_address"),
-            location             = data.get("location"),
-            user_agent           = data.get("user_agent"),
-            occurred_at          = data.get("occurred_at"),
-            endpoint             = data.get("endpoint"),
-            method               = data.get("method"),
-            status_code          = data.get("status_code"),
-            response_time_ms     = data.get("response_time_ms"),
-            privilege_escalation = data.get("privilege_escalation", False),
-            severity             = data.get("severity", "low"),
-            meta_data             = json.dumps(data.get("metadata")) if data.get("metadata") else None,
+            api_key_id=data["api_key_id"],
+            actor_email=data.get("actor_email"),
+            actor_id=data.get("actor_id"),
+            actor_role=data.get("actor_role"),
+            event_type=data["event_type"],
+            resource=data.get("resource"),
+            action_count=data.get("action_count", 1),
+            ip_address=data.get("ip_address"),
+            location=data.get("location"),
+            user_agent=data.get("user_agent"),
+            occurred_at=occurred_at,
+            endpoint=data.get("endpoint"),
+            method=data.get("method"),
+            status_code=data.get("status_code"),
+            response_time_ms=data.get("response_time_ms"),
+            privilege_escalation=data.get("privilege_escalation", False),
+            severity=data.get("severity", "low"),
+            meta_data=json.dumps(data.get("metadata"))
+            if data.get("metadata")
+            else None,
         )
         db.add(log)
         db.commit()
@@ -59,11 +70,11 @@ async def _handle_message(data: dict):
         # 3. For each rule hit → persist Alert + WebSocket push
         for hit in hits:
             alert = Alert(
-                log_id     = log.id,
-                api_key_id = log.api_key_id,
-                severity   = hit["severity"],
-                title      = hit["title"],
-                message    = hit["message"],
+                log_id=log.id,
+                api_key_id=log.api_key_id,
+                severity=hit["severity"],
+                title=hit["title"],
+                message=hit["message"],
             )
             db.add(alert)
             db.commit()
@@ -76,12 +87,12 @@ async def _handle_message(data: dict):
                 {
                     "type": "new_alert",
                     "data": {
-                        "id":         alert.id,
-                        "log_id":     alert.log_id,
-                        "severity":   alert.severity,
-                        "title":      alert.title,
-                        "message":    alert.message,
-                        "resolved":   alert.resolved,
+                        "id": alert.id,
+                        "log_id": alert.log_id,
+                        "severity": alert.severity,
+                        "title": alert.title,
+                        "message": alert.message,
+                        "resolved": alert.resolved,
                         "created_at": alert.created_at.isoformat(),
                     },
                 },
@@ -96,7 +107,7 @@ async def _handle_message(data: dict):
 
 async def run_worker():
     """Long-running coroutine — start as asyncio.create_task() in lifespan.
-    
+
     If Kafka is unavailable the worker logs a warning and exits gracefully
     so the rest of the application continues running.
     """

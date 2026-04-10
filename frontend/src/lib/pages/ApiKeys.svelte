@@ -4,26 +4,24 @@
   import ProtectedPage from '../components/ProtectedPage.svelte'
   import Button from '../components/ui/Button.svelte'
   import Card from '../components/ui/Card.svelte'
-  import Input from '../components/ui/Input.svelte'
   import Table from '../components/ui/Table.svelte'
   import { extractList } from '../normalize'
 
   let loading = true
   let creating = false
   let error = ''
-  let keyName = ''
 
   let rows: Array<Record<string, unknown>> = []
   let createdSecret = ''
 
   const columns = [
-    { key: 'name', label: 'Name', sortable: true },
-    { key: 'createdAt', label: 'Created At', sortable: true },
-    { key: 'lastUsedAt', label: 'Last Used', sortable: true },
+    { key: 'id', label: 'Key ID', sortable: true },
+    { key: 'key', label: 'API Key', sortable: true },
+    { key: 'created_at', label: 'Created At', sortable: true },
     { key: 'status', label: 'Status', sortable: true },
   ]
 
-  let sortKey = 'createdAt'
+  let sortKey = 'created_at'
   let sortDirection: 'asc' | 'desc' = 'desc'
 
   $: sortedRows = [...rows].sort((a, b) => {
@@ -44,7 +42,20 @@
 
     try {
       const response = await api.getApiKeys()
-      rows = extractList(response, ['apiKeys', 'keys'])
+      const list = extractList(response, ['apiKeys', 'keys'])
+      rows = list.map((item) => {
+        const key = String(item.key ?? '')
+        const id = String(item.id ?? '')
+        const createdAt = String(item.created_at ?? '')
+        const isActive = Boolean(item.is_active)
+
+        return {
+          id,
+          key,
+          created_at: createdAt,
+          status: isActive ? 'active' : 'revoked',
+        }
+      })
     } catch (err) {
       rows = []
       if (err instanceof ApiError) {
@@ -60,23 +71,17 @@
   }
 
   async function createKey(): Promise<void> {
-    if (!keyName.trim()) {
-      error = 'Please provide a key name.'
-      return
-    }
-
     creating = true
     error = ''
     createdSecret = ''
 
     try {
-      const response = await api.createApiKey(keyName.trim())
+      const response = await api.createApiKey('generated-key')
       createdSecret = String(
         (response as Record<string, unknown>).key ??
           (response as Record<string, unknown>).secret ??
           ''
       )
-      keyName = ''
       await loadKeys()
     } catch (err) {
       if (err instanceof ApiError) {
@@ -105,8 +110,7 @@
 
     <Card title="Create new key" subtitle="Use unique names per service and environment.">
       <form class="create" on:submit|preventDefault={createKey}>
-        <Input label="Key name" bind:value={keyName} placeholder="backend-prod" />
-        <Button type="submit" disabled={creating}>{creating ? 'Creating...' : 'Create key'}</Button>
+        <Button type="submit" disabled={creating}>{creating ? 'Creating...' : 'Generate API key'}</Button>
       </form>
 
       {#if createdSecret}
@@ -146,9 +150,9 @@
 
   .create {
     display: grid;
-    grid-template-columns: 1fr auto;
+    grid-template-columns: auto;
     gap: 0.6rem;
-    align-items: end;
+    align-items: center;
   }
 
   .state {
@@ -179,7 +183,7 @@
 
   @media (max-width: 700px) {
     .create {
-      grid-template-columns: 1fr;
+      grid-template-columns: auto;
     }
   }
 </style>

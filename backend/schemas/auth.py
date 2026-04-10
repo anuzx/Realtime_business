@@ -23,6 +23,16 @@ class LoginSchema(BaseModel):
     password: str
 
 
+class UserProfile(BaseModel):
+    id: str
+    email: EmailStr
+    first_name: str | None = None
+    last_name: str | None = None
+    company_name: str | None = None
+
+
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str = "bearer"
+    user: UserProfile
+    api_key: str

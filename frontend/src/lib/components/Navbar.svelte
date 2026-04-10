@@ -27,7 +27,11 @@
 
   <div class="user-box">
     <div>
-      <strong>{$authStore.user?.name || 'Analyst'}</strong>
+      <strong>
+        {$authStore.user?.first_name
+          ? `${$authStore.user.first_name} ${$authStore.user?.last_name ?? ''}`.trim()
+          : $authStore.user?.name || 'Analyst'}
+      </strong>
       <span>{$authStore.user?.email || 'signed-in user'}</span>
     </div>
     <Button variant="ghost" size="sm" onclick={logout}>Logout</Button>

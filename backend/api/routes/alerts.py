@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
-from api.deps import get_db
+from api.deps import get_current_user, get_db
 from models.alert import Alert
 from models.api_key import APIKey
 from models.user import User
@@ -11,24 +11,22 @@ from schemas.alert import AlertResponse
 router = APIRouter(prefix="/alerts", tags=["Alerts"])
 
 
-def _get_key_ids(user_email: str, db: Session) -> List[str]:
-    user = db.query(User).filter(User.email == user_email).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-    return [k.id for k in db.query(APIKey).filter(APIKey.user_id == user.id).all()]
+def _get_key_ids(user_id: str, db: Session) -> List[str]:
+    return [k.id for k in db.query(APIKey).filter(APIKey.user_id == user_id).all()]
 
 
-@router.get("/", response_model=List[AlertResponse])
+@router.get("", response_model=List[AlertResponse])
 def list_alerts(
-    user_email: str,
+    current_user: User = Depends(get_current_user),
     severity: Optional[str] = Query(None, pattern="^(low|medium|high|critical)$"),
     resolved: Optional[bool] = None,
     limit: int = Query(50, le=200),
     offset: int = 0,
     db: Session = Depends(get_db),
 ):
-    """GET /alerts?severity=high  — list alerts, filterable by severity & resolved status."""
-    key_ids = _get_key_ids(user_email, db)
+    key_ids = _get_key_ids(current_user.id, db)
+    if not key_ids:
+        return []
 
     q = db.query(Alert).filter(Alert.api_key_id.in_(key_ids))
 
@@ -41,9 +39,12 @@ def list_alerts(
 
 
 @router.get("/{alert_id}", response_model=AlertResponse)
-def get_alert(alert_id: str, user_email: str, db: Session = Depends(get_db)):
-    """GET /alerts/:id — fetch a single alert."""
-    key_ids = _get_key_ids(user_email, db)
+def get_alert(
+    alert_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    key_ids = _get_key_ids(current_user.id, db)
 
     alert = (
         db.query(Alert)
@@ -57,9 +58,13 @@ def get_alert(alert_id: str, user_email: str, db: Session = Depends(get_db)):
 
 
 @router.patch("/{alert_id}/resolve", response_model=AlertResponse)
-def resolve_alert(alert_id: str, user_email: str, db: Session = Depends(get_db)):
-    """Mark an alert as resolved."""
-    key_ids = _get_key_ids(user_email, db)
+@router.patch("/{alert_id}", response_model=AlertResponse)
+def resolve_alert(
+    alert_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    key_ids = _get_key_ids(current_user.id, db)
 
     alert = (
         db.query(Alert)

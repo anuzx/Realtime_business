@@ -154,43 +154,31 @@ export const api = {
   },
 
   getLogs(filters?: Record<string, QueryValue>) {
-    return request<Record<string, unknown> | Array<Record<string, unknown>>>(
-      "/logs",
-      {
-        query: filters,
-      },
-    );
+    return request<Array<Record<string, unknown>>>("/logs", {
+      query: filters,
+    });
   },
 
-  getAlerts() {
-    return request<Record<string, unknown> | Array<Record<string, unknown>>>(
-      "/alerts",
-    );
+  getAlerts(filters?: Record<string, QueryValue>) {
+    return request<Array<Record<string, unknown>>>("/alerts", {
+      query: filters,
+    });
   },
 
   resolveAlert(id: string) {
-    return request<Record<string, unknown>>(`/alerts/${id}`, {
+    return request<Record<string, unknown>>(`/alerts/${id}/resolve`, {
       method: "PATCH",
     });
   },
 
   getApiKeys() {
-    return request<Record<string, unknown> | Array<Record<string, unknown>>>(
-      "/api-keys",
-    );
+    return request<Array<Record<string, unknown>>>("/api-keys");
   },
 
   createApiKey(name: string) {
     return request<Record<string, unknown>>("/api-keys", {
       method: "POST",
       body: { name },
-    });
-  },
-
-  analyzeAI(logIds: string[]) {
-    return request<Record<string, unknown>>("/ai/analyze", {
-      method: "POST",
-      body: { logIds },
     });
   },
 };

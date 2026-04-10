@@ -30,9 +30,11 @@ async def stop_producer():
 
 
 async def publish_log(topic: str, data: dict):
-    """Publish a message. Never raises — Kafka failure must not block the API."""
+    """Publish a message. Returns True on success, False on failure."""
     try:
         producer = await get_producer()
         await producer.send_and_wait(topic, data)
+        return True
     except Exception as exc:
         logger.error("Kafka publish error topic=%s: %s", topic, exc)
+        return False
