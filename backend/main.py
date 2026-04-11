@@ -10,7 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from kafka.worker import run_worker
 from kafka.producer import stop_producer
-from api.routes import auth, api_key, logs, alerts, dashboard
+from api.routes import auth, api_key, logs, alerts, dashboard, env
 from db.base import Base
 from db.session import engine
 
@@ -50,6 +50,7 @@ app.include_router(api_key.router, prefix="/api-keys", tags=["API Keys"])
 app.include_router(logs.router)
 app.include_router(alerts.router)
 app.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
+app.include_router(env.router)
 
 
 @app.get("/health", tags=["Health"])
