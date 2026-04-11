@@ -25,6 +25,14 @@
     return () => clearInterval(interval);
   });
 
+  function scrollToFooter(event: MouseEvent): void {
+    event.preventDefault();
+    const footer = document.getElementById('about-footer');
+    if (footer) {
+      footer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
 </script>
 
 <div class="app-container">
@@ -39,7 +47,7 @@
         <nav class="header-nav">
           <a href="/" use:link class="nav-link">Home</a>
           <a href="/docs" use:link class="nav-link">Docs</a>
-          <a href="/about" use:link class="nav-link">About</a>
+          <a href="#about-footer" class="nav-link" onclick={scrollToFooter}>About</a>
         </nav>
       </div>
 
@@ -92,7 +100,7 @@
   </section>
 
   <!-- Custom Integrated Footer -->
-  <footer class="footer-root">
+  <footer id="about-footer" class="footer-root">
     <div class="footer-content">
       
       <!-- Footer Top Row -->
@@ -120,7 +128,7 @@
         <div class="link-group">
           <div class="footer-label">Resources</div>
           <nav>
-            <a href="#docs" class="nav-link">Documentation</a>
+            <a href="/docs" use:link class="nav-link">Documentation</a>
             <a href="#security" class="nav-link">Trust Center</a>
             <a href="#api" class="nav-link">API Status</a>
           </nav>
