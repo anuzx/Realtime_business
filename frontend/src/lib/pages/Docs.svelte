@@ -5,148 +5,26 @@
   import Button from '../components/ui/Button.svelte'
   import Card from '../components/ui/Card.svelte'
 
-  type Language = 'javascript' | 'go' | 'python' | 'java'
+  type Language = 'python'
 
   const snippets: Record<Language, { label: string; fileName: string; code: string }> = {
-    javascript: {
-      label: 'JavaScript',
-      fileName: 'send-log.js',
-      code: `const API_KEY = 'sk_abc123...'
-const ENDPOINT = 'https://my_app/api/logs'
-
-async function sendLog() {
-  const payload = {
-    event_type: 'login',
-    actor_email: 'user@theirdomain.com',
-    endpoint: '/dashboard',
-    method: 'GET',
-    status_code: 200,
-    response_time_ms: 142.5
-  }
-
-  const res = await fetch(ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': API_KEY
-    },
-    body: JSON.stringify(payload)
-  })
-
-  console.log(await res.json())
-}
-
-setInterval(sendLog, 5000)`,
-    },
-    go: {
-      label: 'Go',
-      fileName: 'send_log.go',
-      code: `package main
-
-import (
-  "bytes"
-  "encoding/json"
-  "fmt"
-  "net/http"
-  "time"
-)
-
-func main() {
-  apiKey := "sk_abc123..."
-  endpoint := "https://my_app/api/logs"
-
-  for {
-    payload := map[string]any{
-      "event_type": "login",
-      "actor_email": "user@theirdomain.com",
-      "endpoint": "/dashboard",
-      "method": "GET",
-      "status_code": 200,
-    }
-
-    body, _ := json.Marshal(payload)
-    req, _ := http.NewRequest("POST", endpoint, bytes.NewBuffer(body))
-    req.Header.Set("Content-Type", "application/json")
-    req.Header.Set("X-API-Key", apiKey)
-
-    res, err := http.DefaultClient.Do(req)
-    if err == nil {
-      fmt.Println("status:", res.Status)
-      res.Body.Close()
-    }
-
-    time.Sleep(5 * time.Second)
-  }
-}`,
-    },
     python: {
       label: 'Python',
-      fileName: 'send_log.py',
-      code: `import asyncio
-import httpx
+      fileName: 'fastapi_setup.py',
+      code: `from fastapi import FastAPI
+from securelog_sdk import instrument
 
-API_KEY = "sk_abc123..."
-ENDPOINT = "https://my_app/api/logs"
+app = FastAPI()
 
-async def send_log_every_5_seconds():
-    while True:
-        payload = {
-            "event_type": "login",
-            "actor_email": "user@theirdomain.com",
-            "endpoint": "/dashboard",
-            "method": "GET",
-            "status_code": 200,
-        }
-
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                ENDPOINT,
-                json=payload,
-                headers={"X-API-Key": API_KEY},
-            )
-            print(response.json())
-
-        await asyncio.sleep(5)
-
-asyncio.run(send_log_every_5_seconds())`,
-    },
-    java: {
-      label: 'Java',
-      fileName: 'SendLog.java',
-      code: `import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
-public class SendLog {
-  public static void main(String[] args) throws Exception {
-    var apiKey = "sk_abc123...";
-    var endpoint = "https://my_app/api/logs";
-    var client = HttpClient.newHttpClient();
-
-    while (true) {
-      var json = """
-        {"event_type":"login","actor_email":"user@theirdomain.com","endpoint":"/dashboard","method":"GET","status_code":200}
-        """;
-
-      var request = HttpRequest.newBuilder()
-        .uri(URI.create(endpoint))
-        .header("Content-Type", "application/json")
-        .header("X-API-Key", apiKey)
-        .POST(HttpRequest.BodyPublishers.ofString(json))
-        .build();
-
-      var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-      System.out.println(response.body());
-
-      Thread.sleep(5000);
-    }
-  }
-}`,
+instrument(
+    app,
+    api_key="sk_your_key_here",
+    base_url="https://securelog.pulseguard.com",
+)`,
     },
   }
 
-  const languages: Language[] = ['javascript', 'go', 'python', 'java']
+  const languages: Language[] = ['python']
 
   const terminalTheme = {
     background: '#000000',
@@ -155,7 +33,7 @@ public class SendLog {
     cursor: '#ffffff',
   }
 
-  let activeLanguage: Language = 'javascript'
+  let activeLanguage: Language = 'python'
   let copiedLanguage: Language | null = null
   let copiedTimeout: ReturnType<typeof setTimeout> | null = null
 
@@ -163,14 +41,12 @@ public class SendLog {
 
   $: terminalStructure = {
     examples: {
-      'send-log.js': snippets.javascript.code,
-      'send_log.go': snippets.go.code,
-      'send_log.py': snippets.python.code,
-      'SendLog.java': snippets.java.code,
+      'fastapi_setup.py': snippets.python.code,
     },
   }
 
   $: terminalAutoplay = [
+    { command: 'pip install securelog-sdk' },
     { command: 'cd examples' },
     { command: `cat ${activeSnippet.fileName}` },
   ]
@@ -216,10 +92,10 @@ public class SendLog {
   <header class="docs-header">
     <div>
       <p class="eyebrow">Developer Documentation</p>
-      <h1>Mac-style terminal integration guide</h1>
+      <h1>Python FastAPI integration guide</h1>
       <p class="subtitle">
-        Black background, white foreground, Geist typography, and copy-ready log sender samples for
-        JavaScript, Go, Python, and Java.
+        Install <code>securelog-sdk</code> and add one instrumentation call inside your existing
+        FastAPI app.
       </p>
     </div>
 
@@ -233,8 +109,8 @@ public class SendLog {
 
   <div class="docs-grid">
     <Card
-      title="Language snippets"
-      subtitle="Use the selector below and copy the code block instantly."
+      title="Python snippet"
+      subtitle="Run `pip install securelog-sdk`, then copy this setup block."
       className="snippet-card"
     >
       <div class="language-switch" role="tablist" aria-label="Snippet language">
@@ -269,7 +145,7 @@ public class SendLog {
 
     <Card
       title="Interactive terminal"
-      subtitle="Powered by svelte-bash with a black and white terminal theme."
+      subtitle="Python-only walkthrough with install and FastAPI setup commands."
       className="terminal-card"
     >
       <div class="terminal-frame">

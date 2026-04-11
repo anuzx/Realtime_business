@@ -46,7 +46,7 @@
         </div>
         <nav class="header-nav">
           <a href="/" use:link class="nav-link">Home</a>
-          <a href="/docs" use:link class="nav-link">Docs</a>
+          <a href="/docs" use:link class="nav-link">Python Docs</a>
           <a href="#about-footer" class="nav-link" onclick={scrollToFooter}>About</a>
         </nav>
       </div>
@@ -128,7 +128,7 @@
         <div class="link-group">
           <div class="footer-label">Resources</div>
           <nav>
-            <a href="/docs" use:link class="nav-link">Documentation</a>
+            <a href="/docs" use:link class="nav-link">Python Documentation</a>
             <a href="#security" class="nav-link">Trust Center</a>
             <a href="#api" class="nav-link">API Status</a>
           </nav>
